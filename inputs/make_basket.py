@@ -199,6 +199,7 @@ def add_store(stores_with_item, item_name):
 
 
 def edit_item(item):
+    global STORE_HAS_ITEMS
     in_val = None
     while in_val != "r":
         item_name = item["name"]
@@ -213,7 +214,7 @@ def edit_item(item):
         for index, store in enumerate(stores_with_item):
             print("{:<6} {:<20} {}".format(index + 1, store["store"], store["price"]))
         print(
-            "\n'e' to edit item name\n'a' to add a store\n'r' to return to the previous menu"
+            "\n'e' to edit item name\n'd' to delete item\n'a' to add a store\n'r' to return to the previous menu"
         )
         in_val = input("> ").lower()
         if in_val.isdigit():
@@ -233,25 +234,28 @@ def edit_item(item):
                     break
                 else:
                     print("That is not a valid price")
-        if in_val == "e":
-            STORE_HAS_ITEMS[stores_with_item[int_val - 1]["original index"]][
-                "item"
-            ] = input("What is the new name? > ")
-            item = next(
-                (
-                    item
-                    for item in ITEMS
-                    if item["name"] == stores_with_item[int_val - 1]["item"]
-                )
-            )
-            item["name"] = STORE_HAS_ITEMS[
-                stores_with_item[int_val - 1]["original index"]
-            ]["item"]
+        elif in_val == "e":
+            item['name'] = input("What is the new name? > ")
+            for edge in stores_with_item:
+                STORE_HAS_ITEMS[edge['original index']]['item'] = item['name']
+        elif in_val == "d":
+            delete_confirm = input("type 'y' if you are sure you want to delete the item and all of its associated prices > ")
+            if delete_confirm == 'y':
+                ITEMS.remove(item)
+                STORE_HAS_ITEMS = list(filter(lambda x: x['item'] != item_name, STORE_HAS_ITEMS))
+                in_val = 'r'
         elif in_val == "a":
             add_store(stores_with_item, item_name)
         elif in_val != "r":
             print("Invalid input")
 
+
+def add_item():
+    item_name = input("What is the new item name? > ")
+    item = {'name': item_name}
+    ITEMS.append(item)
+    return edit_item(item)
+    
 
 def save():
     file_obj = {"stores": STORES, "storeHasItem": STORE_HAS_ITEMS, "items": ITEMS}
@@ -277,7 +281,7 @@ def main():
                 continue
             edit_item(ITEMS[int_val - 1])
         if in_val == "a":
-            pass
+            add_item()
         elif in_val == "s":
             save()
             in_val = "q"
