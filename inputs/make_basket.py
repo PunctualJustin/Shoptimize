@@ -8,6 +8,8 @@ STORES = None
 STORE_HAS_ITEMS = None
 
 # todo: add delete store (from item)
+# todo: change text from list to message when list is empty (e.g., when an item has no stores, display "item has not stores" instead of the list headings)
+
 
 def init():
     global ITEMS
@@ -79,7 +81,9 @@ def add_new_store():
                 ):
                     print("That shipping option does not exist")
                     continue
-                shipping_type_dict['type'] = current_shipping_types[shipping_var_int - 1]["type"]
+                shipping_type_dict["type"] = current_shipping_types[
+                    shipping_var_int - 1
+                ]["type"]
             else:
                 print("That is not a valid selection")
 
@@ -103,7 +107,11 @@ def add_new_store():
             is_nested = True
 
     base = (" {:<30}" * 2) + " {:<8} {:<30} {:<8}"
-    shipping_type = next(shipping_type_ for shipping_type_ in shipping_types if shipping_type_['type'] == store["shipping"]["type"])
+    shipping_type = next(
+        shipping_type_
+        for shipping_type_ in shipping_types
+        if shipping_type_["type"] == store["shipping"]["type"]
+    )
     valid_input = False
     while not valid_input:
         print(
@@ -119,7 +127,12 @@ def add_new_store():
                 "ALTERNATE SHIPPING COST"
                 if not store["shipping"].get(shipping_type.get("nested_type")) is None
                 and not store["shipping"][shipping_type["nested_type"]].get(
-                    next(shipping_type_.get("variable") for shipping_type_ in shipping_types if shipping_type_['type'] == store["shipping"][shipping_type["nested_type"]]["type"])
+                    next(
+                        shipping_type_.get("variable")
+                        for shipping_type_ in shipping_types
+                        if shipping_type_["type"]
+                        == store["shipping"][shipping_type["nested_type"]]["type"]
+                    )
                 )
                 is None
                 else "",
@@ -134,11 +147,21 @@ def add_new_store():
                 if not store["shipping"].get(shipping_type.get("nested_type")) is None
                 else "",
                 store["shipping"][shipping_type["nested_type"]][
-                    next(shipping_type_["variable"] for shipping_type_ in shipping_types if shipping_type_['type'] == store["shipping"][shipping_type["nested_type"]]["type"])
+                    next(
+                        shipping_type_["variable"]
+                        for shipping_type_ in shipping_types
+                        if shipping_type_["type"]
+                        == store["shipping"][shipping_type["nested_type"]]["type"]
+                    )
                 ]
                 if not store["shipping"].get(shipping_type.get("nested_type")) is None
                 and not store["shipping"][shipping_type["nested_type"]].get(
-                    next(shipping_type_.get("variable") for shipping_type_ in shipping_types if shipping_type_['type'] == store["shipping"][shipping_type["nested_type"]]["type"])
+                    next(
+                        shipping_type_.get("variable")
+                        for shipping_type_ in shipping_types
+                        if shipping_type_["type"]
+                        == store["shipping"][shipping_type["nested_type"]]["type"]
+                    )
                 )
                 is None
                 else "",
@@ -233,15 +256,19 @@ def edit_item(item):
                 else:
                     print("That is not a valid price")
         elif in_val == "e":
-            item['name'] = input("What is the new name? > ")
+            item["name"] = input("What is the new name? > ")
             for edge in stores_with_item:
-                STORE_HAS_ITEMS[edge['original index']]['item'] = item['name']
+                STORE_HAS_ITEMS[edge["original index"]]["item"] = item["name"]
         elif in_val == "d":
-            delete_confirm = input("type 'y' if you are sure you want to delete the item and all of its associated prices > ")
-            if delete_confirm == 'y':
+            delete_confirm = input(
+                "type 'y' if you are sure you want to delete the item and all of its associated prices > "
+            )
+            if delete_confirm == "y":
                 ITEMS.remove(item)
-                STORE_HAS_ITEMS = list(filter(lambda x: x['item'] != item_name, STORE_HAS_ITEMS))
-                in_val = 'r'
+                STORE_HAS_ITEMS = list(
+                    filter(lambda x: x["item"] != item_name, STORE_HAS_ITEMS)
+                )
+                in_val = "r"
         elif in_val == "a":
             add_store(stores_with_item, item_name)
         elif in_val != "r":
@@ -250,10 +277,10 @@ def edit_item(item):
 
 def add_item():
     item_name = input("What is the new item name? > ")
-    item = {'name': item_name}
+    item = {"name": item_name}
     ITEMS.append(item)
     return edit_item(item)
-    
+
 
 def save():
     file_obj = {"stores": STORES, "storeHasItem": STORE_HAS_ITEMS, "items": ITEMS}
