@@ -1,0 +1,44 @@
+[
+    {
+        "id": "food",
+        "name": "food",
+        "stores": [
+            {
+                "store id": "amznca",
+                "price": 10
+            },
+            {
+                "store id": "amazncom",
+                "price": 5
+            }
+        ]
+    },
+    {
+        "id": "brick",
+        "name": "brick",
+        "stores": [
+            {
+                "store id": "amznca",
+                "price": 10
+            },
+            {
+                "store id": "amazncom",
+                "price": 5
+            }
+        ]
+    },
+    {
+        "id": "shoe",
+        "name": "shoe",
+        "stores": [
+            {
+                "store id": "amznca",
+                "price": 10
+            },
+            {
+                "store id": "amazncom",
+                "price": 15
+            }
+        ]
+    }
+]
