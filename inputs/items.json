@@ -1,44 +1,72 @@
-[
-    {
-        "id": "food",
-        "name": "food",
-        "stores": [
-            {
-                "store id": "amznca",
-                "price": 10
-            },
-            {
-                "store id": "amazncom",
-                "price": 5
+
+{
+    "stores": [
+        {
+            "name": "amazon.ca",
+            "shipping": {
+                "type": "free"
             }
-        ]
-    },
-    {
-        "id": "brick",
-        "name": "brick",
-        "stores": [
-            {
-                "store id": "amznca",
+        },
+        {
+            "name": "amazon.com",
+            "shipping": {
+                "type": "flat",
                 "price": 10
-            },
-            {
-                "store id": "amazncom",
-                "price": 5
             }
-        ]
-    },
-    {
-        "id": "shoe",
-        "name": "shoe",
-        "stores": [
-            {
-                "store id": "amznca",
-                "price": 10
-            },
-            {
-                "store id": "amazncom",
-                "price": 15
+        },
+        {
+            "name": "beststore.com",
+            "shipping": {
+                "type": "free above",
+                "minimum_price": 25,
+                "other_type": {
+                    "type": "fixed",
+                    "price": 5
+                }
             }
-        ]
-    }
-]
+        }
+    ],
+    "storeHasItem": [
+        {
+            "store": "amazon.ca", 
+            "item": "food",
+            "price": 10
+        },
+        {
+            "store": "amazon.com", 
+            "item": "food",
+            "price": 5
+        },
+        {
+            "store": "amazon.ca", 
+            "item": "brick",
+            "price": 10
+        },
+        {
+            "store": "amazon.com", 
+            "item": "brick",
+            "price": 5
+        },
+        {
+            "store": "amazon.ca", 
+            "item": "shoe",
+            "price": 10
+        },
+        {
+            "store": "amazon.com", 
+            "item": "shoe",
+            "price": 15
+        }
+    ],
+    "items": [
+        {
+            "name": "food"
+        },
+        {
+            "name": "brick"
+        },
+        {
+            "name": "shoe"
+        }
+    ]
+}
