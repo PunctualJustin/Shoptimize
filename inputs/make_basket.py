@@ -8,8 +8,6 @@ STORES = None
 STORE_HAS_ITEMS = None
 
 # todo: add delete store (from item)
-# todo: add delete item
-# todo: add add item
 
 def init():
     global ITEMS
