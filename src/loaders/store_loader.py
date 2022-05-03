@@ -1,13 +1,12 @@
 from connectors.csv_connector import CSVConnector
+from connectors.json_connector import JSONConnector
 from core.store import Store
 
 
-stores_csv_file = "inputs/stores.csv"
 
-
-def add_stores():
+def add_stores(input_file_path):
     stores = {}
-    csv = CSVConnector(stores_csv_file)
-    for item in csv:
-        stores[item["ID"]] = Store(**item)
+    obj = JSONConnector(input_file_path, 'stores')
+    for store in obj:
+        stores[store["name"]] = Store(**store)
     return stores

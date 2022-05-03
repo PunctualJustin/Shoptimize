@@ -2,11 +2,13 @@ import json
 
 
 class JSONConnector:
-    def __init__(self, file_path):
+    def __init__(self, file_path, key=None):
         with open(file_path) as file:
             self.obj = json.load(file)
+        if key is not None:
+            self.obj = self.obj[key]
         if not isinstance(self.obj, list):
-            raise Exception("File object is not a list")
+            raise Exception("object provided is not a list")
         self.__n = 0
         self.__len = len(self.obj)
 
