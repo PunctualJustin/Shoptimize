@@ -17,10 +17,10 @@ class Store:
         self.items[item] = price
         self.lp_variables.add(f"{self.name}_{item}")
         self.shipping.add_item(item)
-    
+
     def __repr__(self) -> str:
         return self.name
-    
+
     def get_objective(self):
         return (
             lpSum(

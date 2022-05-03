@@ -45,12 +45,15 @@ class Shipping:
         return self.type_
 
     def get_shipping_variables(self):
-        if self.type_ in ['flat', 'free_above']:
-            return [self.lp_variables[self.get_lp_variable('init')]]
-        elif self.type_ == 'fixed':
-            return [self.lp_variables[self.get_lp_variable('item', item=item)] for item in self.store.items]
+        if self.type_ in ["flat", "free_above"]:
+            return [self.lp_variables[self.get_lp_variable("init")]]
+        elif self.type_ == "fixed":
+            return [
+                self.lp_variables[self.get_lp_variable("item", item=item)]
+                for item in self.store.items
+            ]
         return []
-    
+
     def get_lp_variable(self, variable_type, **kwargs):
         return self.variable_types[self.type_].get(variable_type, lambda **x: None)(
             store=self.store.name, **kwargs

@@ -14,7 +14,7 @@ def get_constraints(stores):
     return constraints
 
 
-def make_shipping_constraints(constraints, store, shipping, modifier = 0):
+def make_shipping_constraints(constraints, store, shipping, modifier=0):
     if shipping == "flat":
         flat_rate_constraint(constraints, store, modifier)
     elif shipping == "fixed":
@@ -71,15 +71,29 @@ def fixed_rate_constraint(constraints, store, modifier):
 def free_above_constraint(constraints, store):
     constraints[f"free_above_{store.name}"] = LpConstraint(
         (
-            lpSum(store.lp_variables[f"{store.name}_{item_name}"]*price for item_name, price in store.items.items())
-            - store.lp_variables[f"{store.name}_shipping_minimum"]*store.shipping.minimum_price
+            lpSum(
+                store.lp_variables[f"{store.name}_{item_name}"] * price
+                for item_name, price in store.items.items()
+            )
+            - store.lp_variables[f"{store.name}_shipping_minimum"]
+            * store.shipping.minimum_price
         ),
         const.LpConstraintGE,
         rhs=0,
     )
-    constraints.update({f"free_above_{store.name}_{variable.name}": LpConstraint(
-        variable + store.lp_variables[f"{store.name}_shipping_minimum"],
-        const.LpConstraintLE,
-        rhs=1,
-    ) for variable in store.shipping.other_type.get_shipping_variables()})
-    make_shipping_constraints(constraints, store, store.shipping.other_type.type_, store.lp_variables[f"{store.name}_shipping_minimum"])
+    constraints.update(
+        {
+            f"free_above_{store.name}_{variable.name}": LpConstraint(
+                variable + store.lp_variables[f"{store.name}_shipping_minimum"],
+                const.LpConstraintLE,
+                rhs=1,
+            )
+            for variable in store.shipping.other_type.get_shipping_variables()
+        }
+    )
+    make_shipping_constraints(
+        constraints,
+        store,
+        store.shipping.other_type.type_,
+        store.lp_variables[f"{store.name}_shipping_minimum"],
+    )
