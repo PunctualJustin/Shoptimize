@@ -11,7 +11,7 @@
             "name": "amazon.com",
             "shipping": {
                 "type": "flat",
-                "price": 10
+                "price": 25
             }
         },
         {
@@ -28,7 +28,7 @@
     ],
     "storeHasItem": [
         {
-            "store": "amazon.ca", 
+            "store": "beststore.com", 
             "item": "food",
             "price": 10
         },
@@ -38,7 +38,7 @@
             "price": 5
         },
         {
-            "store": "amazon.ca", 
+            "store": "beststore.com", 
             "item": "brick",
             "price": 10
         },
@@ -48,7 +48,7 @@
             "price": 5
         },
         {
-            "store": "amazon.ca", 
+            "store": "beststore.com", 
             "item": "shoe",
             "price": 10
         },
