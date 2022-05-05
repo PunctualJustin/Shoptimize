@@ -10,18 +10,47 @@
         {
             "name": "amazon.com",
             "shipping": {
-                "type": "flat",
-                "price": 25
+                "type": "dynamic",
+                "combinations": [
+                    {
+                        "items": ["food", "brick", "shoe"],
+                        "price": 19
+                    },
+                    {
+                        "items": ["food", "brick"],
+                        "price": 14
+                    },
+                    {
+                        "items": ["brick", "shoe"],
+                        "price": 14
+                    },
+                    {
+                        "items": ["food", "shoe"],
+                        "price": 12
+                    },
+                    {
+                        "items": ["food"],
+                        "price": 7
+                    },
+                    {
+                        "items": ["brick"],
+                        "price": 12
+                    },
+                    {
+                        "items": ["shoe"],
+                        "price": 8
+                    }
+                ]
             }
         },
         {
             "name": "beststore.com",
             "shipping": {
                 "type": "free above",
-                "minimum_price": 25,
+                "minimum_price": 50,
                 "other_type": {
                     "type": "fixed",
-                    "price": 5
+                    "price": 1
                 }
             }
         }
@@ -35,7 +64,7 @@
         {
             "store": "amazon.com", 
             "item": "food",
-            "price": 5
+            "price": 10
         },
         {
             "store": "beststore.com", 
@@ -45,7 +74,7 @@
         {
             "store": "amazon.com", 
             "item": "brick",
-            "price": 5
+            "price": 10
         },
         {
             "store": "beststore.com", 
@@ -55,7 +84,7 @@
         {
             "store": "amazon.com", 
             "item": "shoe",
-            "price": 15
+            "price": 10
         }
     ],
     "items": [
