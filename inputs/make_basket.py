@@ -1,5 +1,5 @@
-import csv
 import json
+from pulp import allcombinations
 
 items_file = "inputs/items.json"
 
@@ -39,10 +39,14 @@ shipping_types = [
     },
     {
         "type": "free above",
-        "name": "free above",
+        "name": "free above a minimum price",
         "variable": "minimum_price",
         "variable_name": "minimum total?",
         "nested_type": "other_type",
+    },
+    {
+        "type": "dynamic",
+        "name": "shipping price changes based on the items",
     },
 ]
 
@@ -99,6 +103,8 @@ def add_new_store():
                     valid_number = True
                 else:
                     print("That is not a valid number")
+        elif shipping_type["type"] == "dynamic":
+            shipping_type_dict["combinations"] = []
 
         nested_type = shipping_type.get("nested_type")
         if nested_type is not None:
@@ -198,22 +204,69 @@ def add_store(stores_with_item, item_name):
             if int_val < 1 or int_val > len(remaining_stores):
                 print("That store does not exist")
                 continue
-            valid_price = False
-            while not valid_price:
+            break_out = False
+            while not break_out:
                 store_with_item = {
                     "store": remaining_stores[int_val - 1],
                     "item": item_name,
                 }
                 new_price = input("What is the price at the store? > ")
                 if new_price.isdigit():
-                    store_with_item["price"] = new_price
+                    store_with_item["price"] = float(new_price)
                     stores_with_item.append(store_with_item)
                     STORE_HAS_ITEMS.append(store_with_item)
-                    valid_price = True
-                elif new_price == "r":
                     break
+                elif new_price == "r":
+                    break_out = True
                 else:
                     print("That is not a valid price")
+
+            if not break_out:
+                store = next(
+                    store
+                    for store in STORES
+                    if store_with_item["store"] == store["name"]
+                )
+                if store["shipping"]["type"] == "dynamic" or (
+                    store["shipping"].get("other_type")
+                    and store["shipping"]["other_type"]["type"] == "dynamic"
+                ):
+                    # gather new item combos
+                    store_items = [
+                        edge["item"]
+                        for edge in STORE_HAS_ITEMS
+                        if edge["store"] == store["name"]
+                    ]
+                    combos = allcombinations(store_items, len(store_items))
+                    combos_with_item = filter(lambda combo: item_name in combo, combos)
+                    if store["shipping"]["type"] == "free_above":
+                        min_price = store["shipping"]["minimum_price"]
+                        combos_with_item = [
+                            combo
+                            for combo in combos_with_item
+                            if sum(
+                                edge["price"]
+                                for edge in STORE_HAS_ITEMS
+                                if edge["item"] in combo and edge["store"] == store
+                            )
+                            < min_price
+                        ]
+                    # add prices
+                    for combo in combos_with_item:
+                        while not break_out:
+                            new_price = input(
+                                f"What is the shipping for {','.join(combo)}? > "
+                            )
+                            if new_price.isdigit():
+                                combo_dict = {"items": combo, "price": float(new_price)}
+                                store["shipping"]["combinations"].append(combo_dict)
+                                break
+                            elif new_price == "r":
+                                break_out = True
+                            else:
+                                print("That is not a valid price")
+                        if break_out == True:
+                            break
         elif in_val == "n":
             add_new_store()
         elif in_val != "r":
