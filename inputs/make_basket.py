@@ -58,7 +58,7 @@ def add_new_store():
     while is_nested:
         is_nested = False
         nested_level += 1
-        while not shipping_var_int:
+        while True:
             current_shipping_types = [
                 shipping_type
                 for shipping_type in shipping_types
@@ -84,6 +84,7 @@ def add_new_store():
                 shipping_type_dict["type"] = current_shipping_types[
                     shipping_var_int - 1
                 ]["type"]
+                break
             else:
                 print("That is not a valid selection")
 
