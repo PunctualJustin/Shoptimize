@@ -16,7 +16,7 @@
             "name": "make basket",
             "type": "python",
             "request": "launch",
-            "program": "inputs/make_basket.py",
+            "program": "src/make_basket/main.py",
             "console": "integratedTerminal",
             "justMyCode": false
         },
