@@ -3,7 +3,7 @@ from typing import List
 from pulp import allcombinations
 from common.list_printer import ColumnWidths
 from common.list_printer import list_printer
-from common.set_price import set_price
+from common.input_helpers import set_price
 
 shipping_types = [
     {"type": "free", "name": "free"},

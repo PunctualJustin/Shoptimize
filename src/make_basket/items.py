@@ -1,5 +1,5 @@
 from common.list_printer import ColumnWidths, list_printer
-from common.set_price import set_price
+from common.input_helpers import set_price
 from stores import add_store
 
 
