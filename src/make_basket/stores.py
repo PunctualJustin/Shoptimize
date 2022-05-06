@@ -37,6 +37,32 @@ def add_new_store(stores):
     first_level_nesting_types = ["free above"]
     store_name = input("What is the new store name? > ")
     store = {"name": store_name, "shipping": {}}
+
+    # store has tax?
+    while True:
+        new_price = input(f"enter tax from 0 to 1 (default 0.15) > ")
+        if new_price == "":
+            store["tax"] = 0.15
+            break
+        elif new_price.isdigit():
+            store["tax"] = float(new_price)
+            break
+        else:
+            print("that is not a valid input")
+
+    # store has exchange rate?
+    while True:
+        new_price = input(f"enter an exchange rate (default 1) > ")
+        if new_price == "":
+            store["exchange"] = 1
+            break
+        elif new_price.isdigit():
+            store["exchange"] = float(new_price)
+            break
+        else:
+            print("that is not a valid input")
+
+    # add shipping type
     shipping_type_dict = store["shipping"]
     shipping_var_int = None
     is_nested = True
@@ -89,6 +115,7 @@ def add_new_store(stores):
         elif shipping_type["type"] == "dynamic":
             shipping_type_dict["combinations"] = []
 
+        # recurse over other shipping type (for free above)
         nested_type = shipping_type.get("nested_type")
         if nested_type is not None:
             shipping_type_dict[nested_type] = {}
@@ -96,6 +123,7 @@ def add_new_store(stores):
             shipping_var_int = None
             is_nested = True
 
+    # confirmation
     base = (" {:<30}" * 2) + " {:<8} {:<30} {:<8}"
 
     shipping_type = next(
@@ -105,6 +133,8 @@ def add_new_store(stores):
     )
     headers = {
         "NAME": ColumnWidths.NAME,
+        "TAX": ColumnWidths.PRICE,
+        "EXCHANGE RATE": ColumnWidths.NAME,
         "SHIPPING TYPE": ColumnWidths.NAME,
         "COST"
         if not store["shipping"].get(shipping_type.get("variable")) is None
@@ -128,6 +158,8 @@ def add_new_store(stores):
     contents = [
         [
             store["name"],
+            store["tax"],
+            store["exchange"],
             store["shipping"]["type"],
             store["shipping"].get(shipping_type.get("variable")) or "",
             store["shipping"][shipping_type["nested_type"]]["type"]

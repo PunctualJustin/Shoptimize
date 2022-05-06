@@ -5,8 +5,10 @@ from .variable_map import LpVariableMap
 
 
 class Store:
-    def __init__(self, name, shipping):
+    def __init__(self, name, tax, exchange, shipping):
         self.name = name
+        self.tax = tax + 1
+        self.exchange = exchange
         self.lp_variables = LpVariableMap()
         self.shipping = Shipping(self, **shipping)
         self.items = {}
@@ -25,7 +27,10 @@ class Store:
         return (
             lpSum(
                 [
-                    self.lp_variables[f"{self.name}_{item_name}"] * price
+                    self.lp_variables[f"{self.name}_{item_name}"]
+                    * price
+                    * self.tax
+                    * self.exchange
                     + self.shipping.get_item_objective(item_name)
                     for item_name, price in self.items.items()
                 ]

@@ -3,12 +3,16 @@
     "stores": [
         {
             "name": "amazon.ca",
+            "tax": 0.15,
+            "exchange": 1,
             "shipping": {
                 "type": "free"
             }
         },
         {
             "name": "amazon.com",
+            "tax": 0,
+            "exchange": 1.35,
             "shipping": {
                 "type": "dynamic",
                 "combinations": [
@@ -45,6 +49,8 @@
         },
         {
             "name": "beststore.com",
+            "tax": 0.15,
+            "exchange": 1,
             "shipping": {
                 "type": "free above",
                 "minimum_price": 50,

@@ -81,6 +81,8 @@ class Shipping:
             return (
                 self.lp_variables[self.get_lp_variable_name("item", item=item)]
                 * self.price
+                * self.store.tax
+                * self.store.exchange
             )
         elif self.type_ == "free above":
             return self.other_type.get_item_objective(item)
@@ -88,13 +90,20 @@ class Shipping:
 
     def get_objective(self):
         if self.type_ == "flat":
-            return self.lp_variables[self.get_lp_variable_name("init")] * self.price
+            return (
+                self.lp_variables[self.get_lp_variable_name("init")]
+                * self.price
+                * self.store.tax
+                * self.store.exchange
+            )
         elif self.type_ == "free above":
             return self.other_type.get_objective()
         elif self.type_ == "dynamic":
             return lpSum(
                 self.lp_variables[self.get_lp_variable_name("combo", *combo["items"])]
                 * combo["price"]
+                * self.store.tax
+                * self.store.exchange
                 for combo in self.combinations
             )
         return 0
