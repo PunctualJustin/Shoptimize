@@ -12,11 +12,15 @@ class Store:
         self.lp_variables = LpVariableMap()
         self.shipping = Shipping(self, **shipping)
         self.items = {}
+        self.shipping_prices = {}
 
     def add_item(self, **kwargs):
         item = kwargs["item"]
         price = kwargs["price"]
+        shipping_price = kwargs.get("shipping price")
         self.items[item] = price
+        if shipping_price:
+            self.shipping_prices[item] = shipping_price
         self.lp_variables.add(f"{self.name}_{item}")
         self.shipping.add_item(item)
 

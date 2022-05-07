@@ -6,11 +6,13 @@ class Shipping:
         lambda **kwargs: f"{kwargs['store']}_{kwargs['shipping_type_indicator']}"
     )
 
+    item_lp_variable = (
+        lambda *args, **kwargs: f"{kwargs['store']}_{kwargs['item']}_shipping"
+    )
+
     variable_name_formats = {
         "free": {},
-        "fixed": {
-            "item": lambda *args, **kwargs: f"{kwargs['store']}_{kwargs['item']}_shipping"
-        },
+        "fixed": {"item": item_lp_variable},
         "flat": {
             "init": lambda *args, **kwargs: Shipping.init_lp_variable(
                 shipping_type_indicator="shipping", **kwargs
@@ -24,6 +26,7 @@ class Shipping:
         "dynamic": {
             "combo": lambda *args, **kwargs: f'{kwargs["store"]}_{"_".join(args)}_shipping'
         },
+        "distinct": {"item": item_lp_variable},
     }
 
     def __init__(self, store, **kwargs):
@@ -50,7 +53,7 @@ class Shipping:
     def get_shipping_variables(self):
         if self.type_ in ["flat", "free_above"]:
             return [self.lp_variables[self.get_lp_variable_name("init")]]
-        elif self.type_ == "fixed":
+        elif self.type_ in ["fixed", "distinct"]:
             return [
                 self.lp_variables[self.get_lp_variable_name("item", item=item)]
                 for item in self.store.items
@@ -81,6 +84,13 @@ class Shipping:
             return (
                 self.lp_variables[self.get_lp_variable_name("item", item=item)]
                 * self.price
+                * self.store.tax
+                * self.store.exchange
+            )
+        elif self.type_ == "distinct":
+            return (
+                self.lp_variables[self.get_lp_variable_name("item", item=item)]
+                * self.store.shipping_prices[item]
                 * self.store.tax
                 * self.store.exchange
             )

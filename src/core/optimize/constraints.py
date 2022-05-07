@@ -15,7 +15,7 @@ def get_constraints(stores):
 def make_shipping_constraints(constraints, store, shipping, modifier=0):
     if shipping.type_ == "flat":
         flat_rate_constraint(constraints, store, modifier)
-    elif shipping.type_ == "fixed":
+    elif shipping.type_ in ("fixed", "distinct"):
         fixed_rate_constraint(constraints, store, modifier)
     elif shipping.type_ == "dynamic":
         dynamic_rate_constraint(constraints, store, shipping, modifier)

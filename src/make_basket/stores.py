@@ -4,6 +4,7 @@ from pulp import allcombinations
 from common.list_printer import ColumnWidths
 from common.list_printer import list_printer
 from common.input_helpers import set_price
+from common.input_helpers import get_float_input
 
 shipping_types = [
     {"type": "free", "name": "free"},
@@ -28,8 +29,9 @@ shipping_types = [
     },
     {
         "type": "dynamic",
-        "name": "shipping price changes based on the items",
+        "name": "shipping price changes dynamically based on the items",
     },
+    {"type": "distinct", "name": "each item has its own shipping cost"},
 ]
 
 
@@ -225,17 +227,14 @@ def add_store(
                 print("That store does not exist")
                 continue
             store_name = remaining_stores[int_val - 1]
-            break_out = set_store_price(
+            break_out, store_with_item = set_store_price(
                 store_name, stores_with_item, item_name, store_has_items
             )
 
             if not break_out:
                 store = next(store for store in stores if store_name == store["name"])
-                if store["shipping"]["type"] == "dynamic" or (
-                    store["shipping"].get("other_type")
-                    and store["shipping"]["other_type"]["type"] == "dynamic"
-                ):
-                    add_dynamic_shipping_prices(store, item_name, store_has_items)
+                add_dynamic_shipping_prices(store, item_name, store_has_items)
+                add_distinct_shipping_price(store, store_with_item)
 
         elif in_val == "n":
             add_new_store(stores)
@@ -257,21 +256,25 @@ def set_store_price(
     if not break_out:
         store_has_items.append(store_with_item)
         stores_with_item.append(store_with_item)
-    return break_out
+    return break_out, store_with_item
 
 
 def add_dynamic_shipping_prices(store, item_name, store_has_items):
-    combos_with_item = get_item_combinations(store_has_items, store, item_name)
-    # add prices
-    for combo in combos_with_item:
-        combo_dict = {"items": combo}
-        break_out = set_price(
-            combo_dict, f"What is the shipping for {','.join(combo)}?"
-        )
-        if break_out == True:
-            break
-        else:
-            store["shipping"]["combinations"].append(combo_dict)
+    if store["shipping"]["type"] == "dynamic" or (
+        store["shipping"].get("other_type")
+        and store["shipping"]["other_type"]["type"] == "dynamic"
+    ):
+        combos_with_item = get_item_combinations(store_has_items, store, item_name)
+        # add prices
+        for combo in combos_with_item:
+            combo_dict = {"items": combo}
+            break_out = set_price(
+                combo_dict, f"What is the shipping for {','.join(combo)}?"
+            )
+            if break_out == True:
+                break
+            else:
+                store["shipping"]["combinations"].append(combo_dict)
 
 
 def get_item_combinations(store_has_items, store, item_name) -> List[List[str]]:
@@ -294,3 +297,16 @@ def get_item_combinations(store_has_items, store, item_name) -> List[List[str]]:
             < min_price
         ]
     return combos_with_item
+
+
+def add_distinct_shipping_price(store, store_with_item):
+    if store["shipping"]["type"] == "distinct" or (
+        store["shipping"].get("other_type")
+        and store["shipping"]["other_type"]["type"] == "distinct"
+    ):
+        get_float_input(
+            store_with_item,
+            "shipping price",
+            "What is the shipping price?",
+            "That is not a valid price",
+        )

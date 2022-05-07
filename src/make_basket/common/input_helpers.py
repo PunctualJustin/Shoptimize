@@ -1,5 +1,6 @@
 from typing import Callable
 
+
 def set_price(element: dict, message: str = None) -> bool:
     message = f"{message} > " if message else f"What is the price? > "
     return get_float_input(element, "price", message, "That is not a valid price")
