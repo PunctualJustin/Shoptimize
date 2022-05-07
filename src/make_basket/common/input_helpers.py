@@ -16,7 +16,7 @@ def get_float_input(
     additional_validation = additional_validation or (lambda x: True)
     while not break_out:
         new_price = input(f"{input_message} > ")
-        if new_price.isdigit() and additional_validation(new_price):
+        if new_price.replace(".", "", 1).isdigit() and additional_validation(new_price):
             element[key] = float(new_price)
             break
         elif new_price == "r":

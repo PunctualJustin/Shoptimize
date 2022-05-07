@@ -44,7 +44,7 @@ def add_new_store(stores):
         if new_price == "":
             store["tax"] = 0.15
             break
-        elif new_price.isdigit():
+        elif new_price.replace(".", "", 1).isdigit():
             store["tax"] = float(new_price)
             break
         else:
@@ -56,7 +56,7 @@ def add_new_store(stores):
         if new_price == "":
             store["exchange"] = 1
             break
-        elif new_price.isdigit():
+        elif new_price.replace(".", "", 1).isdigit():
             store["exchange"] = float(new_price)
             break
         else:
@@ -106,7 +106,7 @@ def add_new_store(stores):
             valid_number = False
             while not valid_number:
                 shipping_var_in = input(f"{shipping_type['variable_name']} > ")
-                if shipping_var_in.isdigit():
+                if shipping_var_in.replace(".", "", 1).isdigit():
                     shipping_var_int = int(shipping_var_in)
                     shipping_type_dict[shipping_type["variable"]] = shipping_var_int
                     valid_number = True
