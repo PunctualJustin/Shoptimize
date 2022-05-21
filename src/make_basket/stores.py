@@ -263,7 +263,7 @@ def add_dynamic_shipping_prices(store, item_name, store_has_items):
     if (
         store["shipping"]["type"] != "dynamic" and 
         (
-            store["shipping"].get("other_type") and
+            store["shipping"].get("other_type") is None or
             store["shipping"]["other_type"]["type"] != "dynamic"
         )
     ):
