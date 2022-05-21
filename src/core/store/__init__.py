@@ -19,7 +19,7 @@ class Store:
         price = kwargs["price"]
         shipping_price = kwargs.get("shipping price")
         self.items[item] = price
-        if shipping_price:
+        if shipping_price is not None:
             self.shipping_prices[item] = shipping_price
         self.lp_variables.add(f"{self.name}_{item}")
         self.shipping.add_item(item)
