@@ -262,13 +262,15 @@ def set_store_price(
 def add_dynamic_shipping_prices(store, item_name, store_has_items):
     if (
         store["shipping"]["type"] != "dynamic" or 
-        store["shipping"].get("other_type") is None or 
-        store["shipping"]["other_type"]["type"] != "dynamic"
+        (
+            store["shipping"].get("other_type")  and
+            store["shipping"]["other_type"]["type"] != "dynamic"
+        )
     ):
         return
     
     if store["shipping"]["type"] == "dynamic":
-        shipping_combos = store["shipping"]
+        shipping_combos = store["shipping"]["combinations"]
     else:
         shipping_combos = store["shipping"]["other_type"]["combinations"]
         
