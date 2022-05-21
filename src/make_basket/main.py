@@ -33,13 +33,13 @@ def save():
 def main():
     init()
     in_val = None
-    while in_val != "q":
+    while in_val != "r":
         print(f"EDIT ITEMS")
         print("select an item number to edit stores or remove it")
         print("{:<6} {}".format("", "NAME"))
         for index, item in enumerate(ITEMS):
             print("{:<6} {}".format(index + 1, item.get("name")))
-        print("\n'a' to add an item\n's' to save and quit\n'q' to quit without saving")
+        print("\n'a' to add an item\n's' to save and continue\n'q' to save and quit\n'r' to quit without saving")
         in_val = input("> ").lower()
         if in_val.isdigit():
             int_val = int(in_val)
@@ -51,8 +51,10 @@ def main():
             add_item(ITEMS, STORE_HAS_ITEMS, STORES)
         elif in_val == "s":
             save()
-            in_val = "q"
-        elif in_val != "q":
+        elif in_val == "q":
+            save()
+            in_val = "r"
+        elif in_val != "r":
             print("Invalid input")
 
 
