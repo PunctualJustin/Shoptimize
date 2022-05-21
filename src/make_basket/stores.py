@@ -294,7 +294,7 @@ def get_item_combinations(store_has_items, store, item_name) -> List[List[str]]:
     ]
     combos = allcombinations(store_items, len(store_items))
     combos_with_item = filter(lambda combo: item_name in combo, combos)
-    if store["shipping"]["type"] == "free_above":
+    if store["shipping"]["type"] == "free above":
         min_price = store["shipping"]["minimum_price"]
         combos_with_item = [
             combo
@@ -302,9 +302,8 @@ def get_item_combinations(store_has_items, store, item_name) -> List[List[str]]:
             if sum(
                 edge["price"]
                 for edge in store_has_items
-                if edge["item"] in combo and edge["store"] == store
-            )
-            < min_price
+                if edge["item"] in combo and edge["store"] == store['name']
+            ) < min_price
         ]
     return combos_with_item
 
