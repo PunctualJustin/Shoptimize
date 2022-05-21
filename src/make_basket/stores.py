@@ -260,21 +260,29 @@ def set_store_price(
 
 
 def add_dynamic_shipping_prices(store, item_name, store_has_items):
-    if store["shipping"]["type"] == "dynamic" or (
-        store["shipping"].get("other_type")
-        and store["shipping"]["other_type"]["type"] == "dynamic"
+    if (
+        store["shipping"]["type"] != "dynamic" or 
+        store["shipping"].get("other_type") is None or 
+        store["shipping"]["other_type"]["type"] != "dynamic"
     ):
-        combos_with_item = get_item_combinations(store_has_items, store, item_name)
-        # add prices
-        for combo in combos_with_item:
-            combo_dict = {"items": combo}
-            break_out = set_price(
-                combo_dict, f"What is the shipping for {','.join(combo)}?"
-            )
-            if break_out == True:
-                break
-            else:
-                store["shipping"]["combinations"].append(combo_dict)
+        return
+    
+    if store["shipping"]["type"] == "dynamic":
+        shipping_combos = store["shipping"]
+    else:
+        shipping_combos = store["shipping"]["other_type"]["combinations"]
+        
+    combos_with_item = get_item_combinations(store_has_items, store, item_name)
+    # add prices
+    for combo in combos_with_item:
+        combo_dict = {"items": combo}
+        break_out = set_price(
+            combo_dict, f"What is the shipping for {','.join(combo)}?"
+        )
+        if break_out == True:
+            break
+        else:
+            shipping_combos.append(combo_dict)
 
 
 def get_item_combinations(store_has_items, store, item_name) -> List[List[str]]:
