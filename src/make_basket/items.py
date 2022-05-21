@@ -1,6 +1,6 @@
 from common.list_printer import ColumnWidths, list_printer
 from common.input_helpers import set_price
-from stores import add_store, get_item_combinations
+from stores import add_store, delete_store
 
 
 def edit_item(item, items_list, store_has_items, stores):
@@ -65,15 +65,34 @@ def remove_store(item, stores_with_item, store_has_items, stores, items_list):
             if int_val < 1 or int_val > len(stores_with_item):
                 print("That store does not exist")
                 continue
-            store_with_item = stores_with_item[int_val - 1]
-            remove_linkage(store_has_items, store_with_item, stores, item_name)
+            columns = {
+                "Choose an Option": ColumnWidths.INDEX,
+                "": ColumnWidths.NAME,
+            }
+            contents = [["Remove item from store"], ["Remove all items from store and delete store"]]
+            list_printer(columns, contents)
+            del_val = input("(1) > ").lower()
+            if del_val == "":
+                del_val = "1"
+            if del_val.isdigit():
+                del_val = int(del_val)
+                if del_val < 1 or del_val > 2:
+                    print(f"{del_val} is not a valid selection")
+                    continue
+                
+                store_with_item = stores_with_item[int_val - 1]
+                store = next(store for store in stores if store_with_item['store'] == store["name"])
+                if del_val == 1:
+                    remove_linkage(store_has_items, store_with_item, store, item_name)
+                if del_val == 2:
+                    delete_store(store, store_has_items, stores)
+                in_val='r'
         elif in_val != "r":
             print("Invalid input")
 
 
-def remove_linkage(store_has_items, store_with_item, stores, item_name):
+def remove_linkage(store_has_items, store_with_item, store, item_name):
     del store_has_items[store_with_item["original index"]]
-    store = next(store for store in stores if store_with_item['store'] == store["name"])
     if (
         store["shipping"]["type"] != "dynamic" or 
         store["shipping"].get("other_type") is None or 

@@ -318,3 +318,15 @@ def add_distinct_shipping_price(store, store_with_item):
             "What is the shipping price?",
             "That is not a valid price",
         )
+
+
+def delete_store(store, store_has_items, stores):
+    delete_confirm = input(
+        "type 'y' if you are sure you want to delete the store and all of its associated prices > "
+    )
+    if delete_confirm == "y":
+        stores.remove(store)
+        for edge in store_has_items:
+            if edge["store"] == store["name"]:
+                store_has_items.remove(edge)
+    return "r"
