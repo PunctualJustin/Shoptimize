@@ -9,7 +9,7 @@ class Store:
         self.name = name
         self.tax = tax + 1
         self.exchange = exchange
-        self.lp_variables = LpVariableMap()
+        self.lp_variables = LpVariableMap(self)
         self.shipping = Shipping(self, **shipping)
         self.items = {}
         self.shipping_prices = {}
@@ -21,7 +21,7 @@ class Store:
         self.items[item] = price
         if shipping_price is not None:
             self.shipping_prices[item] = shipping_price
-        self.lp_variables.add(f"{self.name}_{item}")
+        self.lp_variables.add(item)
         self.shipping.add_item(item)
 
     def __repr__(self) -> str:
@@ -31,7 +31,7 @@ class Store:
         return (
             lpSum(
                 [
-                    self.lp_variables[f"{self.name}_{item_name}"]
+                    self.lp_variables.get(item=item_name)
                     * price
                     * self.tax
                     * self.exchange

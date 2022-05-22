@@ -2,36 +2,16 @@ from pulp import lpSum
 
 
 class Shipping:
-    init_lp_variable = (
-        lambda **kwargs: f"{kwargs['store']}_{kwargs['shipping_type_indicator']}"
-    )
-
-    item_lp_variable = (
-        lambda *args, **kwargs: f"{kwargs['store']}_{kwargs['item']}_shipping"
-    )
-
-    variable_name_formats = {
-        "free": {},
-        "fixed": {"item": item_lp_variable},
-        "flat": {
-            "init": lambda *args, **kwargs: Shipping.init_lp_variable(
-                shipping_type_indicator="shipping", **kwargs
-            )
-        },
-        "free above": {
-            "init": lambda *args, **kwargs: Shipping.init_lp_variable(
-                shipping_type_indicator="shipping_minimum", **kwargs
-            )
-        },
-        "dynamic": {
-            "combo": lambda *args, **kwargs: f'{kwargs["store"]}_{"_".join(args)}_shipping'
-        },
-        "distinct": {"item": item_lp_variable},
-    }
-
     def __init__(self, store, **kwargs):
         self.store = store
-        if kwargs["type"] not in Shipping.variable_name_formats:
+        if kwargs["type"] not in [
+            "free",
+            "fixed",
+            "distinct",
+            "dynamic",
+            "flat",
+            "free above",
+        ]:
             raise Exception(f'unknown shipping type {kwargs["type"]}')
         self.type_ = kwargs["type"]
         self.lp_variables = self.store.lp_variables
@@ -45,51 +25,46 @@ class Shipping:
             self.combinations = kwargs["combinations"]
             self.add_combo()
 
-        self.lp_variables.add(self.get_lp_variable_name("init"))
+        self.lp_variables.add(shipping_type=self.type_)
 
     def __repr__(self) -> str:
         return self.type_
 
     def get_shipping_variables(self):
         if self.type_ in ["flat", "free_above"]:
-            return [self.lp_variables[self.get_lp_variable_name("init")]]
+            return [self.lp_variables.get(shipping_type=self.type_)]
         elif self.type_ in ["fixed", "distinct"]:
             return [
-                self.lp_variables[self.get_lp_variable_name("item", item=item)]
+                self.lp_variables.get(item=item, shipping_type=self.type_)
                 for item in self.store.items
             ]
         elif self.type_ == "dynamic":
             return [
-                self.lp_variables[self.get_lp_variable_name("combo", *combo["items"])]
+                self.lp_variables.get(shipping_type=self.type_, combo=combo["items"])
                 for combo in self.combinations
             ]
         return []
 
-    def get_lp_variable_name(self, variable_type, *args, **kwargs):
-        return self.variable_name_formats[self.type_].get(
-            variable_type, lambda **x: None
-        )(*args, store=self.store.name, **kwargs)
-
     def add_item(self, item):
-        self.lp_variables.add(self.get_lp_variable_name("item", item=item))
+        self.lp_variables.add(item=item, shipping_type=self.type_)
         if self.type_ == "free above":
             self.other_type.add_item(item)
 
     def add_combo(self):
         for combo in self.combinations:
-            self.lp_variables.add(self.get_lp_variable_name("combo", *combo["items"]))
+            self.lp_variables.add(shipping_type=self.type_, combo=combo["items"])
 
     def get_item_objective(self, item):
         if self.type_ == "fixed":
             return (
-                self.lp_variables[self.get_lp_variable_name("item", item=item)]
+                self.lp_variables.get(item=item, shipping_type=self.type_)
                 * self.price
                 * self.store.tax
                 * self.store.exchange
             )
         elif self.type_ == "distinct":
             return (
-                self.lp_variables[self.get_lp_variable_name("item", item=item)]
+                self.lp_variables.get(item=item, shipping_type=self.type_)
                 * self.store.shipping_prices[item]
                 * self.store.tax
                 * self.store.exchange
@@ -101,7 +76,7 @@ class Shipping:
     def get_objective(self):
         if self.type_ == "flat":
             return (
-                self.lp_variables[self.get_lp_variable_name("init")]
+                self.lp_variables.get(shipping_type=self.type_)
                 * self.price
                 * self.store.tax
                 * self.store.exchange
@@ -110,7 +85,7 @@ class Shipping:
             return self.other_type.get_objective()
         elif self.type_ == "dynamic":
             return lpSum(
-                self.lp_variables[self.get_lp_variable_name("combo", *combo["items"])]
+                self.lp_variables.get(shipping_type=self.type_, combo=combo["items"])
                 * combo["price"]
                 * self.store.tax
                 * self.store.exchange
