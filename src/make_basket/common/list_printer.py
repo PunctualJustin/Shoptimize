@@ -10,15 +10,24 @@ class ColumnWidths(Enum):
     PRICE = 10
 
 
-def list_printer(headers: Dict[str, int], contents: List[List[str]], index=True):
-    column_formatter = reduce(
-        lambda x, y: (x if isinstance(x, str) else " {:<" + f"{x.value}" + "}")
-        + " {:<"
-        + f"{y.value}"
-        + "}",
-        headers.values(),
-    )
-    print(column_formatter.format(*[header for header in headers]))
+def list_printer(headers: Dict[str, int], contents: List[List[str]], index=True, no_header=False):
+    if no_header:
+        column_formatter = reduce(
+            lambda x, y: (x if isinstance(x, str) else " {:<" + f"{x.value}" + "}")
+            + " {:<"
+            + f"{y.value}"
+            + "}",
+            headers,
+        )
+    else:
+        column_formatter = reduce(
+            lambda x, y: (x if isinstance(x, str) else " {:<" + f"{x.value}" + "}")
+            + " {:<"
+            + f"{y.value}"
+            + "}",
+            headers.values(),
+        )
+        print(column_formatter.format(*[header for header in headers]))
     if index:
         for index, row in enumerate(contents):
             print(column_formatter.format(index + 1, *row))
