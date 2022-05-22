@@ -260,20 +260,17 @@ def set_store_price(
 
 
 def add_dynamic_shipping_prices(store, item_name, store_has_items):
-    if (
-        store["shipping"]["type"] != "dynamic" and 
-        (
-            store["shipping"].get("other_type") is None or
-            store["shipping"]["other_type"]["type"] != "dynamic"
-        )
+    if store["shipping"]["type"] != "dynamic" and (
+        store["shipping"].get("other_type") is None
+        or store["shipping"]["other_type"]["type"] != "dynamic"
     ):
         return
-    
+
     if store["shipping"]["type"] == "dynamic":
         shipping_combos = store["shipping"]["combinations"]
     else:
         shipping_combos = store["shipping"]["other_type"]["combinations"]
-        
+
     combos_with_item = get_item_combinations(store_has_items, store, item_name)
     # add prices
     for combo in combos_with_item:
@@ -302,8 +299,9 @@ def get_item_combinations(store_has_items, store, item_name) -> List[List[str]]:
             if sum(
                 edge["price"]
                 for edge in store_has_items
-                if edge["item"] in combo and edge["store"] == store['name']
-            ) < min_price
+                if edge["item"] in combo and edge["store"] == store["name"]
+            )
+            < min_price
         ]
     return combos_with_item
 

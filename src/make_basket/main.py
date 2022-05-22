@@ -39,7 +39,9 @@ def main():
         print("{:<6} {}".format("", "NAME"))
         for index, item in enumerate(ITEMS):
             print("{:<6} {}".format(index + 1, item.get("name")))
-        print("\n'a' to add an item\n's' to save and continue\n'q' to save and quit\n'r' to quit without saving")
+        print(
+            "\n'a' to add an item\n's' to save and continue\n'q' to save and quit\n'r' to quit without saving"
+        )
         in_val = input("> ").lower()
         if in_val.isdigit():
             int_val = int(in_val)

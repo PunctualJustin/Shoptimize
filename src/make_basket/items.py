@@ -39,9 +39,12 @@ def edit_item(item, items_list, store_has_items, stores):
         elif in_val == "a":
             add_store(stores_with_item, item_name, stores, store_has_items)
         elif in_val == "x":
-            in_val = remove_store(item, stores_with_item, store_has_items, stores, items_list)
+            in_val = remove_store(
+                item, stores_with_item, store_has_items, stores, items_list
+            )
         elif in_val != "r":
             print("Invalid input")
+
 
 def remove_store(item, stores_with_item, store_has_items, stores, items_list):
     in_val = None
@@ -56,9 +59,7 @@ def remove_store(item, stores_with_item, store_has_items, stores, items_list):
         }
         contents = [[store["store"], store["price"]] for store in stores_with_item]
         list_printer(columns, contents)
-        print(
-            "'r' to return to the previous menu"
-        )
+        print("'r' to return to the previous menu")
         in_val = input("> ").lower()
         if in_val.isdigit():
             int_val = int(in_val)
@@ -69,7 +70,10 @@ def remove_store(item, stores_with_item, store_has_items, stores, items_list):
                 "Choose an Option": ColumnWidths.INDEX,
                 "": ColumnWidths.NAME,
             }
-            contents = [["Remove item from store"], ["Remove all items from store and delete store"]]
+            contents = [
+                ["Remove item from store"],
+                ["Remove all items from store and delete store"],
+            ]
             list_printer(columns, contents)
             del_val = input("(1) > ").lower()
             if del_val == "":
@@ -79,14 +83,18 @@ def remove_store(item, stores_with_item, store_has_items, stores, items_list):
                 if del_val < 1 or del_val > 2:
                     print(f"{del_val} is not a valid selection")
                     continue
-                
+
                 store_with_item = stores_with_item[int_val - 1]
-                store = next(store for store in stores if store_with_item['store'] == store["name"])
+                store = next(
+                    store
+                    for store in stores
+                    if store_with_item["store"] == store["name"]
+                )
                 if del_val == 1:
                     remove_linkage(store_has_items, store_with_item, store, item_name)
                 if del_val == 2:
                     delete_store(store, store_has_items, stores)
-                in_val='r'
+                in_val = "r"
         elif in_val != "r":
             print("Invalid input")
 
@@ -94,19 +102,19 @@ def remove_store(item, stores_with_item, store_has_items, stores, items_list):
 def remove_linkage(store_has_items, store_with_item, store, item_name):
     del store_has_items[store_with_item["original index"]]
     if (
-        store["shipping"]["type"] != "dynamic" or 
-        store["shipping"].get("other_type") is None or 
-        store["shipping"]["other_type"]["type"] != "dynamic"
+        store["shipping"]["type"] != "dynamic"
+        or store["shipping"].get("other_type") is None
+        or store["shipping"]["other_type"]["type"] != "dynamic"
     ):
         return
-    
+
     if store["shipping"]["type"] == "dynamic":
         shipping_combos = store["shipping"]
     else:
         shipping_combos = store["shipping"]["other_type"]["combinations"]
-                    
+
     # remove combos
-    for combo in list(filter(lambda c: item_name in c['items'], shipping_combos)):
+    for combo in list(filter(lambda c: item_name in c["items"], shipping_combos)):
         shipping_combos.remove(combo)
 
 
