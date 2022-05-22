@@ -10,7 +10,9 @@ class ColumnWidths(Enum):
     PRICE = 10
 
 
-def list_printer(headers: Dict[str, int], contents: List[List[str]], index=True, no_header=False):
+def list_printer(
+    headers: Dict[str, int], contents: List[List[str]], index=True, no_header=False
+):
     if no_header:
         column_formatter = reduce(
             lambda x, y: (x if isinstance(x, str) else " {:<" + f"{x.value}" + "}")
